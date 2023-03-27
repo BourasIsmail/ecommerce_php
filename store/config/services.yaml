@@ -1,0 +1,29 @@
+parameters:
+    # Parameters are defined here. They can be a simple value or get from an Env()
+    app.mailer.admin_email: '%env(APP_ADMIN_EMAIL)%'
+    app.cart.persist_path: '%kernel.project_dir%/data'
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        bind:
+            string $adminEmail: 'admin@system.com'  # here we bind all $adminEmail parameters to this value
+#            string $supportEmail: 'support@system.com'
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Enum/'
+            - '../src/Model/'
+            - '../src/Kernel.php'
+
+    # The following two implementation are just an example of how to inject services with Interface
+    App\Service\CartInterface $cartFile: '@App\Service\CartFile'
+    App\Service\CartInterface: '@App\Service\CartHandler'
+
+    # The following example shows how to inject a parameter inside a service
+    App\Service\CartFile:
+        arguments:
+            $dataPath: '%app.cart.persist_path%'
